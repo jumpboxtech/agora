@@ -1,0 +1,218 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0a0a12;
+  --surface: #0d0d1a;
+  --elevated: #111126;
+  --accent: #00ff88;
+  --danger: #ff3366;
+  --warn: #ffaa00;
+  --info: #38bdf8;
+  --text: #e8e8ef;
+  --text-muted: #6b6b80;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Scan line overlay */
+.scanline {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 136, 0.015) 2px,
+    rgba(0, 255, 136, 0.015) 4px
+  );
+}
+
+.scanline::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 255, 136, 0.03) 50%,
+    transparent 100%
+  );
+  height: 120px;
+  animation: scan 4s linear infinite;
+}
+
+/* Grid background */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Noise texture */
+.noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 49;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Glow effects */
+.glow-green {
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.2), inset 0 0 20px rgba(0, 255, 136, 0.05);
+}
+
+.glow-red {
+  box-shadow: 0 0 20px rgba(255, 51, 102, 0.2), inset 0 0 20px rgba(255, 51, 102, 0.05);
+}
+
+.glow-blue {
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.2), inset 0 0 20px rgba(56, 189, 248, 0.05);
+}
+
+.text-glow-green {
+  text-shadow: 0 0 12px rgba(0, 255, 136, 0.5);
+}
+
+.text-glow-red {
+  text-shadow: 0 0 12px rgba(255, 51, 102, 0.5);
+}
+
+/* Request card styles */
+.request-card {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.request-card:hover {
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.request-card.selected {
+  border-color: var(--info);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.15);
+}
+
+.request-card.valid-result {
+  border-color: var(--accent);
+  animation: flashGreen 0.5s ease-out;
+}
+
+.request-card.invalid-result {
+  border-color: var(--danger);
+  animation: flashRed 0.5s ease-out;
+}
+
+@keyframes flashGreen {
+  0% { background: rgba(0, 255, 136, 0.2); }
+  100% { background: var(--surface); }
+}
+
+@keyframes flashRed {
+  0% { background: rgba(255, 51, 102, 0.2); }
+  100% { background: var(--surface); }
+}
+
+/* HUD bar */
+.hud-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+
+.hud-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* JSON syntax highlighting */
+.json-key { color: #38bdf8; }
+.json-string { color: #00ff88; }
+.json-number { color: #ffaa00; }
+.json-bool { color: #ff3366; }
+.json-null { color: #6b6b80; }
+.json-error { color: #ff3366; text-decoration: underline wavy; }
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+}
+
+/* Level transition overlay */
+.level-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 18, 0.95);
+  backdrop-filter: blur(8px);
+}
+
+/* Ticker tape for throughput */
+.ticker {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-jetbrains), monospace;
+}
+
+/* Button styles */
+.btn-approve {
+  background: linear-gradient(135deg, #00cc6a, #00ff88);
+  color: #0a0a12;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.btn-approve:hover {
+  box-shadow: 0 0 24px rgba(0, 255, 136, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-approve:active {
+  transform: translateY(0);
+}
+
+.btn-reject {
+  background: linear-gradient(135deg, #cc2952, #ff3366);
+  color: white;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.btn-reject:hover {
+  box-shadow: 0 0 24px rgba(255, 51, 102, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-reject:active {
+  transform: translateY(0);
+}
