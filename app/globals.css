@@ -75,58 +75,8 @@ body {
   box-shadow: 0 0 20px rgba(0, 255, 136, 0.2), inset 0 0 20px rgba(0, 255, 136, 0.05);
 }
 
-.glow-red {
-  box-shadow: 0 0 20px rgba(255, 51, 102, 0.2), inset 0 0 20px rgba(255, 51, 102, 0.05);
-}
-
-.glow-blue {
-  box-shadow: 0 0 20px rgba(56, 189, 248, 0.2), inset 0 0 20px rgba(56, 189, 248, 0.05);
-}
-
 .text-glow-green {
   text-shadow: 0 0 12px rgba(0, 255, 136, 0.5);
-}
-
-.text-glow-red {
-  text-shadow: 0 0 12px rgba(255, 51, 102, 0.5);
-}
-
-/* Request card styles */
-.request-card {
-  background: var(--surface);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.request-card:hover {
-  border-color: rgba(56, 189, 248, 0.3);
-}
-
-.request-card.selected {
-  border-color: var(--info);
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.15);
-}
-
-.request-card.valid-result {
-  border-color: var(--accent);
-  animation: flashGreen 0.5s ease-out;
-}
-
-.request-card.invalid-result {
-  border-color: var(--danger);
-  animation: flashRed 0.5s ease-out;
-}
-
-@keyframes flashGreen {
-  0% { background: rgba(0, 255, 136, 0.2); }
-  100% { background: var(--surface); }
-}
-
-@keyframes flashRed {
-  0% { background: rgba(255, 51, 102, 0.2); }
-  100% { background: var(--surface); }
 }
 
 /* HUD bar */
@@ -143,13 +93,11 @@ body {
   transition: width 0.3s ease;
 }
 
-/* JSON syntax highlighting */
-.json-key { color: #38bdf8; }
-.json-string { color: #00ff88; }
-.json-number { color: #ffaa00; }
-.json-bool { color: #ff3366; }
-.json-null { color: #6b6b80; }
-.json-error { color: #ff3366; text-decoration: underline wavy; }
+/* Ticker tape numbers */
+.ticker {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-jetbrains), monospace;
+}
 
 /* Scrollbar */
 ::-webkit-scrollbar {
@@ -161,25 +109,6 @@ body {
 ::-webkit-scrollbar-thumb {
   background: rgba(255,255,255,0.1);
   border-radius: 2px;
-}
-
-/* Level transition overlay */
-.level-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(10, 10, 18, 0.95);
-  backdrop-filter: blur(8px);
-}
-
-/* Ticker tape for throughput */
-.ticker {
-  font-variant-numeric: tabular-nums;
-  font-family: var(--font-jetbrains), monospace;
 }
 
 /* Button styles */
@@ -200,19 +129,80 @@ body {
   transform: translateY(0);
 }
 
-.btn-reject {
-  background: linear-gradient(135deg, #cc2952, #ff3366);
-  color: white;
-  font-weight: 700;
-  border-radius: 8px;
-  transition: all 0.15s ease;
+/* Landing page animations */
+@keyframes float-up {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-20vh) scale(1); opacity: 0; }
 }
 
-.btn-reject:hover {
-  box-shadow: 0 0 24px rgba(255, 51, 102, 0.4);
-  transform: translateY(-1px);
+@keyframes data-flow {
+  0% { stroke-dashoffset: 200; opacity: 0; }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.6; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
 }
 
-.btn-reject:active {
-  transform: translateY(0);
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(var(--orbit-r)) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(var(--orbit-r)) rotate(-360deg); }
+}
+
+@keyframes hex-pulse {
+  0%, 100% { opacity: 0.03; transform: scale(1); }
+  50% { opacity: 0.08; transform: scale(1.02); }
+}
+
+@keyframes terminal-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes dash-scroll {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -60; }
+}
+
+.landing-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: float-up linear infinite;
+  pointer-events: none;
+}
+
+.landing-hex-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: hex-pulse 6s ease-in-out infinite;
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='60' height='52' viewBox='0 0 60 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 15v22L30 52 0 37V15z' fill='none' stroke='rgba(0,255,136,0.06)' stroke-width='0.5'/%3E%3C/svg%3E");
+  background-size: 60px 52px;
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background: var(--accent);
+  animation: terminal-blink 1s step-end infinite;
+  margin-left: 2px;
+  vertical-align: middle;
+}
+
+/* Level overlay */
+.level-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 18, 0.95);
+  backdrop-filter: blur(8px);
 }

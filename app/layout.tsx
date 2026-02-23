@@ -17,32 +17,11 @@ const jetbrains = JetBrains_Mono({
   variable: '--font-jetbrains',
 });
 
-const frameMetadata = {
-  version: 'next',
-  imageUrl: 'https://facilitator.jumpbox.tech/images/frame-preview.png',
-  button: {
-    title: 'Play Facilitator',
-    action: {
-      type: 'launch_frame',
-      name: 'Facilitator',
-      url: 'https://facilitator.jumpbox.tech',
-      splashImageUrl: 'https://facilitator.jumpbox.tech/images/splash.png',
-      splashBackgroundColor: '#0a0a12',
-    },
-  },
-};
-
+// Static metadata (non-dynamic fields only — dynamic OG/frame metadata lives in page.tsx)
 export const metadata: Metadata = {
-  title: 'Facilitator — x402 Payment Verification Game',
+  title: 'Agora — x402 Infrastructure Tycoon',
   description:
-    'You are the x402 facilitator. Verify payment signatures, catch malformed requests, settle USDC on Base. How fast can you process?',
-  other: {
-    'fc:frame': JSON.stringify(frameMetadata),
-    'og:image': frameMetadata.imageUrl,
-    'fc:frame:image': frameMetadata.imageUrl,
-    'fc:frame:button:1': frameMetadata.button.title,
-    'fc:frame:post_url': frameMetadata.button.action.url,
-  },
+    'Build autonomous x402 payment infrastructure. Deploy APIs, hire AI agents, stake $AGORA. The game teaches x402 — the token unlocks real infrastructure.',
 };
 
 export default function RootLayout({
@@ -58,7 +37,7 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className="font-rajdhani bg-surface text-white overflow-hidden">
+      <body className="font-rajdhani bg-surface text-white">
         {children}
       </body>
     </html>

@@ -1,0 +1,16 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjg0MjM2MywidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDBFMjJlMWYyZDlDNDk0NEYwMjZjOGE3MDEyY2M2NDZiQTAxQzkxOTAifQ",
+    "payload": "eyJkb21haW4iOiJhZ29yYS5qdW1wYm94LnRlY2gifQ",
+    "signature": "hNCOVeTsPVzuw16jZ7mgi0FZhQAtMg99/w/YaaT/J4MdNwSPZveFAWoLUOKBimXVhPSYadslWLjJ73yg+Q/qWhs="
+  },
+  "miniapp": {
+    "version": "next",
+    "name": "Agora",
+    "iconUrl": "https://agora.jumpbox.tech/images/agora-icon.png",
+    "splashImageUrl": "https://agora.jumpbox.tech/images/agora-splash.png",
+    "splashBackgroundColor": "#0a0a12",
+    "homeUrl": "https://agora.jumpbox.tech",
+    "webhookUrl": "https://api.neynar.com/f/app/84dcfb81-ba80-42b0-9241-c1ae0cc0a9e9/event"
+  }
+}

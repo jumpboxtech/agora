@@ -1,9 +1,15 @@
 {
-  "name": "facilitator",
-  "version": "1.0.0",
-  "description": "x402 Facilitator — Papers, Please meets x402 payment verification",
+  "name": "agora",
+  "version": "2.0.0",
+  "description": "Agora — x402 Infrastructure Tycoon with $AGORA token economy",
   "private": true,
-  "keywords": ["farcaster", "mini-app", "x402", "game", "base"],
+  "keywords": [
+    "farcaster",
+    "mini-app",
+    "x402",
+    "game",
+    "base"
+  ],
   "author": "Jumpbox",
   "license": "MIT",
   "scripts": {
@@ -13,10 +19,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@farcaster/miniapp-wagmi-connector": "^1.1.1",
+    "@pixi/react": "^8.0.5",
     "@tanstack/react-query": "^5.62.7",
-    "next": "15.1.0",
+    "@upstash/redis": "^1.36.2",
+    "clanker-sdk": "^4.2.10",
+    "next": "^15.3.0",
+    "pixi.js": "^8.16.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "recharts": "^3.7.0",
+    "viem": "^2.46.2",
+    "wagmi": "^3.5.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -24,9 +38,12 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.1.0",
+    "eslint-config-next": "^15.3.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
