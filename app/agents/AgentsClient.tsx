@@ -835,6 +835,10 @@ export default function AgentsClient() {
           <Link href="/docs" className="text-[10px] font-mono text-accent/50 hover:text-accent transition-colors">
             GAME DOCS
           </Link>
+          <span className="text-white/10">&middot;</span>
+          <a href="https://github.com/jumpboxtech/agora" target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-accent/50 hover:text-accent transition-colors">
+            GITHUB
+          </a>
         </div>
       </div>
     </div>

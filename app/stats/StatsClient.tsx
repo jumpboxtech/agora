@@ -353,6 +353,10 @@ export default function StatsClient() {
           <Link href="/" className="text-[10px] font-mono text-accent/50 hover:text-accent transition-colors">
             BACK TO AGORA
           </Link>
+          <span className="text-white/10 mx-2">·</span>
+          <a href="https://github.com/jumpboxtech/agora" target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-accent/50 hover:text-accent transition-colors">
+            GITHUB
+          </a>
           <div className="text-[8px] font-mono text-white/10 mt-1">
             Data sourced from Base mainnet
           </div>

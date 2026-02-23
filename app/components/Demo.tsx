@@ -1684,13 +1684,19 @@ export default function Demo() {
                   onClick={() => window.frame?.sdk?.actions.openUrl('https://agora.jumpbox.tech/stats')}
                   className="flex-1 py-1.5 rounded-lg text-[9px] font-mono bg-accent/10 border border-accent/20 text-accent hover:bg-accent/15 transition-all"
                 >
-                  PROTOCOL STATS
+                  STATS
                 </button>
                 <button
                   onClick={() => window.frame?.sdk?.actions.openUrl('https://agora.jumpbox.tech/docs')}
                   className="flex-1 py-1.5 rounded-lg text-[9px] font-mono bg-accent/10 border border-accent/20 text-accent hover:bg-accent/15 transition-all"
                 >
-                  DOCUMENTATION
+                  DOCS
+                </button>
+                <button
+                  onClick={() => window.frame?.sdk?.actions.openUrl('https://github.com/jumpboxtech/agora')}
+                  className="flex-1 py-1.5 rounded-lg text-[9px] font-mono bg-accent/10 border border-accent/20 text-accent hover:bg-accent/15 transition-all"
+                >
+                  GITHUB
                 </button>
               </div>
             </div>

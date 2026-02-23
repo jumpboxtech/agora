@@ -333,6 +333,10 @@ export default function DocsClient() {
           <Link href="/stats" className="text-[10px] font-mono text-accent/50 hover:text-accent transition-colors">
             PROTOCOL STATS
           </Link>
+          <span className="text-white/10">·</span>
+          <a href="https://github.com/jumpboxtech/agora" target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-accent/50 hover:text-accent transition-colors">
+            GITHUB
+          </a>
         </div>
       </div>
     </div>
