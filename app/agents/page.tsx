@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Providers } from '../components/Providers';
+import { AgentsProviders } from '../components/AgentsProviders';
 import AgentsClient from './AgentsClient';
 
 const APP_URL = 'https://agora.jumpbox.tech';
@@ -17,8 +17,8 @@ export const metadata: Metadata = {
 
 export default function AgentsPage() {
   return (
-    <Providers>
+    <AgentsProviders>
       <AgentsClient />
-    </Providers>
+    </AgentsProviders>
   );
 }

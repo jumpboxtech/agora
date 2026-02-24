@@ -1,13 +1,14 @@
 'use client';
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { AGORA_REWARDS, REWARDS_ABI } from './contracts';
+import { AGORA_REWARDS_V2, REWARDS_V2_ABI } from './contracts';
 
-const REWARDS_ADDR = AGORA_REWARDS as `0x${string}`;
+const REWARDS_ADDR = AGORA_REWARDS_V2 as `0x${string}`;
 
 export interface ClaimTicket {
   amount: bigint;
   nonce: bigint;
+  fid: bigint;
   signature: `0x${string}`;
 }
 
@@ -16,7 +17,7 @@ export function useAgoraRewards(address: `0x${string}` | undefined) {
 
   const { data: userClaimed, refetch: refetchClaimed } = useReadContract({
     address: REWARDS_ADDR,
-    abi: REWARDS_ABI,
+    abi: REWARDS_V2_ABI,
     functionName: 'totalClaimed',
     args: address ? [address] : undefined,
     query: { enabled: !!address, refetchInterval: 15_000 },
@@ -24,21 +25,21 @@ export function useAgoraRewards(address: `0x${string}` | undefined) {
 
   const { data: poolBalance } = useReadContract({
     address: REWARDS_ADDR,
-    abi: REWARDS_ABI,
+    abi: REWARDS_V2_ABI,
     functionName: 'poolBalance',
     query: { refetchInterval: 30_000 },
   });
 
   const { data: totalDistributed } = useReadContract({
     address: REWARDS_ADDR,
-    abi: REWARDS_ABI,
+    abi: REWARDS_V2_ABI,
     functionName: 'totalDistributed',
     query: { refetchInterval: 30_000 },
   });
 
   const { data: totalClaims } = useReadContract({
     address: REWARDS_ADDR,
-    abi: REWARDS_ABI,
+    abi: REWARDS_V2_ABI,
     functionName: 'totalClaims',
     query: { refetchInterval: 30_000 },
   });
@@ -50,14 +51,14 @@ export function useAgoraRewards(address: `0x${string}` | undefined) {
     hash: txHash,
   });
 
-  // ─── Claim action ─────────────────────────────────────────────────────────
+  // ─── Claim action (V2: includes fid) ────────────────────────────────────
 
   const claim = (ticket: ClaimTicket) => {
     writeContract({
       address: REWARDS_ADDR,
-      abi: REWARDS_ABI,
+      abi: REWARDS_V2_ABI,
       functionName: 'claim',
-      args: [ticket.amount, ticket.nonce, ticket.signature],
+      args: [ticket.amount, ticket.nonce, ticket.fid, ticket.signature],
     });
   };
 

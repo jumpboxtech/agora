@@ -34,7 +34,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid category' }, { status: 400 });
   }
 
-  const eventId = event_id || `${category}-${fid}-${Date.now()}`;
+  const eventId = crypto.randomUUID();
+  const dedupId = event_id || `${category}-${fid}-${Date.now()}`;
 
   // Check preference
   const prefs = await getNotifPreferences(fid);
@@ -48,12 +49,12 @@ export async function POST(req: NextRequest) {
   }
 
   // Check dedup
-  const isDupe = await checkNotifDedup(category, fid, eventId);
+  const isDupe = await checkNotifDedup(category, fid, dedupId);
   if (isDupe) {
     return NextResponse.json({ sent: 0, reason: 'duplicate' });
   }
 
-  // Send via Neynar
+  // Send via Neynar (uuid must be valid UUID v4)
   const result = await sendFarcasterNotification({
     targetFids: [fid],
     title,
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
   });
 
   if (result.success > 0) {
-    await setNotifDedup(category, fid, eventId);
+    await setNotifDedup(category, fid, dedupId);
   }
 
   return NextResponse.json({ sent: result.success, errors: result.failure });

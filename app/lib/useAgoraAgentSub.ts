@@ -1,13 +1,16 @@
 'use client';
 
+import { useState, useCallback } from 'react';
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { parseEther } from 'viem';
-import { AGORA_TOKEN, AGORA_AGENT_SUB, AGENT_SUB_ABI, ERC20_ABI } from './contracts';
+import { AGORA_AGENT_SUB, USDC_BASE, AGENT_SUB_ABI, ERC20_ABI } from './contracts';
 
 const SUB_ADDR = AGORA_AGENT_SUB as `0x${string}`;
-const TOKEN_ADDR = AGORA_TOKEN as `0x${string}`;
+const USDC_ADDR = USDC_BASE as `0x${string}`;
+
+type LastAction = 'approve' | 'subscribe' | 'renew' | 'updateAgent' | null;
 
 export function useAgoraAgentSub(address: `0x${string}` | undefined) {
+  const [lastAction, setLastAction] = useState<LastAction>(null);
   // ─── Read on-chain state ──────────────────────────────────────────────────
 
   const { data: subData, refetch: refetchSub } = useReadContract({
@@ -19,10 +22,18 @@ export function useAgoraAgentSub(address: `0x${string}` | undefined) {
   });
 
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
-    address: TOKEN_ADDR,
+    address: USDC_ADDR,
     abi: ERC20_ABI,
     functionName: 'allowance',
     args: address ? [address, SUB_ADDR] : undefined,
+    query: { enabled: !!address, refetchInterval: 15_000 },
+  });
+
+  const { data: usdcBalance, refetch: refetchBalance } = useReadContract({
+    address: USDC_ADDR,
+    abi: ERC20_ABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
     query: { enabled: !!address, refetchInterval: 15_000 },
   });
 
@@ -50,8 +61,9 @@ export function useAgoraAgentSub(address: `0x${string}` | undefined) {
   // ─── Actions ──────────────────────────────────────────────────────────────
 
   const approve = (amount: bigint) => {
+    setLastAction('approve');
     writeContract({
-      address: TOKEN_ADDR,
+      address: USDC_ADDR,
       abi: ERC20_ABI,
       functionName: 'approve',
       args: [SUB_ADDR, amount],
@@ -59,6 +71,7 @@ export function useAgoraAgentSub(address: `0x${string}` | undefined) {
   };
 
   const subscribe = (tier: number, agentName: string, payTo: `0x${string}`) => {
+    setLastAction('subscribe');
     writeContract({
       address: SUB_ADDR,
       abi: AGENT_SUB_ABI,
@@ -68,6 +81,7 @@ export function useAgoraAgentSub(address: `0x${string}` | undefined) {
   };
 
   const renew = () => {
+    setLastAction('renew');
     writeContract({
       address: SUB_ADDR,
       abi: AGENT_SUB_ABI,
@@ -76,6 +90,7 @@ export function useAgoraAgentSub(address: `0x${string}` | undefined) {
   };
 
   const updateAgent = (agentName: string, payTo: `0x${string}`) => {
+    setLastAction('updateAgent');
     writeContract({
       address: SUB_ADDR,
       abi: AGENT_SUB_ABI,
@@ -84,9 +99,15 @@ export function useAgoraAgentSub(address: `0x${string}` | undefined) {
     });
   };
 
+  const resetAction = useCallback(() => {
+    reset();
+    setLastAction(null);
+  }, [reset]);
+
   const refetchAll = () => {
     refetchSub();
     refetchAllowance();
+    refetchBalance();
   };
 
   // ─── Parsed values ────────────────────────────────────────────────────────
@@ -103,6 +124,8 @@ export function useAgoraAgentSub(address: `0x${string}` | undefined) {
     return currentAllowance < amount;
   };
 
+  const balance = (usdcBalance as bigint) ?? BigInt(0);
+
   return {
     // Subscription state
     tier,
@@ -110,7 +133,8 @@ export function useAgoraAgentSub(address: `0x${string}` | undefined) {
     agentName,
     payTo,
     active,
-    // Token approval
+    // USDC balance + approval
+    balance,
     currentAllowance: currentAllowance ?? BigInt(0),
     needsApproval,
     // Global stats
@@ -122,20 +146,22 @@ export function useAgoraAgentSub(address: `0x${string}` | undefined) {
     renew,
     updateAgent,
     refetchAll,
-    reset,
+    reset: resetAction,
     // Tx state
     txHash,
     isWriting,
     isConfirming,
     isConfirmed,
     isPending: isWriting || isConfirming,
+    // Track which action triggered the tx (approve vs subscribe vs renew)
+    lastAction,
   };
 }
 
-// ─── Subscription tier definitions ───────────────────────────────────────────
+// ─── Subscription tier definitions (USDC, 6 decimals) ─────────────────────
 
 export const SUB_TIERS = [
-  { tier: 1, name: 'Starter', cost: parseEther('50000000'), label: '50M/mo' },
-  { tier: 2, name: 'Pro', cost: parseEther('100000000'), label: '100M/mo' },
-  { tier: 3, name: 'Enterprise', cost: parseEther('250000000'), label: '250M/mo' },
+  { tier: 1, name: 'Starter', cost: BigInt(10_000_000), label: '10 USDC', usd: '$10/mo' },
+  { tier: 2, name: 'Pro', cost: BigInt(25_000_000), label: '25 USDC', usd: '$25/mo' },
+  { tier: 3, name: 'Enterprise', cost: BigInt(50_000_000), label: '50 USDC', usd: '$50/mo' },
 ] as const;

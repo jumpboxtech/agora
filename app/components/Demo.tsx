@@ -168,6 +168,8 @@ export default function Demo() {
   const lastTickTime = useRef(Date.now());
   const pendingApiClaims = useRef<string[]>([]);
   const pendingAgoraAmount = useRef(0);
+  const lastClaimTime = useRef(0); // Track last successful claim for cooldown
+  const [cooldownRemaining, setCooldownRemaining] = useState(0); // Countdown seconds for toast
   const questsFetched = useRef(false);
   const gameRef = useRef<GameState>(game);
   const pendingStakeRef = useRef<bigint>(BigInt(0));
@@ -400,15 +402,25 @@ export default function Demo() {
         }));
         pendingAgoraAmount.current = 0;
       }
+      lastClaimTime.current = Date.now(); // Track for cooldown
+      setCooldownRemaining(30); // Start 30s countdown toast
       chainRewards.refetchClaimed();
       chainRewards.reset();
       setClaimingReward(false);
     }
   }, [chainRewards.isConfirmed]);
 
+  // Cooldown countdown timer
+  useEffect(() => {
+    if (cooldownRemaining <= 0) return;
+    const timer = setTimeout(() => setCooldownRemaining(prev => prev - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldownRemaining]);
+
   // Reset on wallet rejection or tx failure — unblock future claims
   useEffect(() => {
     if (chainRewards.isWriteError) {
+      console.warn('[claim] on-chain tx failed/rejected');
       setClaimingReward(false);
       pendingAgoraAmount.current = 0;
       chainRewards.reset();
@@ -445,10 +457,16 @@ export default function Demo() {
         body: JSON.stringify({ address, action, fid: frameData.user.fid, ...(questId && { questId }) }),
       });
       const data = await res.json();
-      if (data.error) { setClaimingReward(false); pendingAgoraAmount.current = 0; return; }
+      if (data.error) {
+        console.warn('[claim]', action, questId, data.error, data.cooldown);
+        // Show cooldown toast if server says cooldown is active
+        if (data.cooldown) setCooldownRemaining(data.cooldown);
+        setClaimingReward(false); pendingAgoraAmount.current = 0; return;
+      }
       const ticket: ClaimTicket = {
         amount: BigInt(data.ticket.amount),
         nonce: BigInt(data.ticket.nonce),
+        fid: BigInt(data.ticket.fid),
         signature: data.ticket.signature as `0x${string}`,
       };
       chainRewards.claim(ticket);
@@ -520,17 +538,21 @@ export default function Demo() {
     return () => { if (tickRef.current) clearInterval(tickRef.current); };
   }, [game.phase]);
 
-  // Claim on-chain rewards for completed API builds
+  // Claim on-chain rewards for completed API builds (one claim per API ID, respects cooldown)
   useEffect(() => {
     if (game.phase !== 'playing') return;
     const drainInterval = setInterval(() => {
-      if (pendingApiClaims.current.length > 0) {
-        pendingApiClaims.current = [];
-        claimReward('deploy_api', undefined, AGORA_REWARDS.deployApi);
+      if (pendingApiClaims.current.length === 0 || claimingReward) return;
+      // Respect 30s cooldown between claims
+      const elapsed = Date.now() - lastClaimTime.current;
+      if (elapsed < 35_000) return; // 35s to account for timing drift
+      const apiId = pendingApiClaims.current.shift();
+      if (apiId) {
+        claimReward('deploy_api', apiId, AGORA_REWARDS.deployApi);
       }
-    }, 2000);
+    }, 5000);
     return () => clearInterval(drainInterval);
-  }, [game.phase, claimReward]);
+  }, [game.phase, claimReward, claimingReward]);
 
   // Auto-save (localStorage every 10s)
   useEffect(() => {
@@ -577,7 +599,7 @@ export default function Demo() {
         apis, apiSlots: maxApiSlots(tierId), agentSlots: maxAgentSlots(tierId),
       };
     });
-    claimReward('upgrade_tier', undefined, AGORA_REWARDS.upgradeTier);
+    claimReward('upgrade_tier', `tier-${tierId}`, AGORA_REWARDS.upgradeTier);
     sendNotification('progress', 'Tier Unlocked!', `You reached ${t.name}. New APIs available!`, `tier-${tierId}-${frameData?.user?.fid}`);
   }, [queueSave, claimReward, sendNotification, frameData]);
 
@@ -942,6 +964,14 @@ export default function Demo() {
         <div className="absolute top-12 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-lg bg-warn/15 border border-warn/30 animate-pop">
           <div className="text-[9px] font-mono text-warn tracking-wider">QUEST COMPLETE</div>
           <div className="text-sm font-bold text-accent">+{formatUSD(questReward.amount)}</div>
+        </div>
+      )}
+      {cooldownRemaining > 0 && (
+        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 animate-pop">
+          <div className="text-[9px] font-mono text-cyan-400/60 tracking-wider">CLAIM COOLDOWN</div>
+          <div className="text-sm font-bold text-cyan-300">
+            {cooldownRemaining === 1 ? 'Ready in 1s' : cooldownRemaining > 0 ? `Ready in ${cooldownRemaining}s` : 'Ready!'}
+          </div>
         </div>
       )}
 

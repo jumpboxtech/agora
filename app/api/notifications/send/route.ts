@@ -45,7 +45,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing title or body' }, { status: 400 });
   }
 
-  const eventId = event_id || `${category}-${Date.now()}`;
+  const dedupId = event_id || `${category}-${Date.now()}`;
+  const uuid = crypto.randomUUID();
 
   // Filter FIDs by preference + dedup
   const eligibleFids: number[] = [];
@@ -58,7 +59,7 @@ export async function POST(req: NextRequest) {
     const catKey = category as keyof typeof prefs;
     if (!prefs[catKey]) { skipped++; continue; }
 
-    const isDupe = await checkNotifDedup(category, fid, eventId);
+    const isDupe = await checkNotifDedup(category, fid, dedupId);
     if (isDupe) { skipped++; continue; }
 
     eligibleFids.push(fid);
@@ -74,12 +75,12 @@ export async function POST(req: NextRequest) {
     title,
     body: bodyText,
     targetUrl: target_url,
-    uuid: eventId,
+    uuid,
   });
 
   // Set dedup keys for successful sends
   for (const fid of eligibleFids) {
-    await setNotifDedup(category, fid, eventId);
+    await setNotifDedup(category, fid, dedupId);
   }
 
   return NextResponse.json({

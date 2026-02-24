@@ -1,0 +1,36 @@
+{
+  "name": "@agora-x402/sdk",
+  "version": "1.0.0",
+  "description": "TypeScript SDK for Agora x402-gated agent APIs on Base",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "x402",
+    "agora",
+    "agent",
+    "base",
+    "usdc",
+    "api",
+    "sdk"
+  ],
+  "author": "jumpbox <jumpbox@jumpbox.tech>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jumpboxtech/agora",
+    "directory": "sdk"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

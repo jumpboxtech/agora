@@ -20,7 +20,7 @@ const CONTRACTS = [
   { name: '$AGORA Token', address: '0x1Ea0cdA49E07BCFa88e79178eE07Db377a69E131', role: 'ERC-20 token' },
   { name: 'Staking', address: '0x2948e4CC6F368DFC34990F90B2cc7750E68Ef3B3', role: 'Stake $AGORA for revenue boosts' },
   { name: 'Agent Subscriptions', address: '0x4FF5385a533FF88fc848946cB13974F44201896b', role: 'Agent service subscriptions + burns' },
-  { name: 'Rewards', address: '0x0fdaB9D5e76E6b6Ba882044900c1976Dd7648c4b', role: 'Claim reward tickets' },
+  { name: 'Rewards V2', address: '0xF7d3b7362021d0dd90E38006e87ac0DC1D537225', role: 'Sybil-resistant reward claims (FID-bound, capped)' },
   { name: 'Dead Address', address: '0x000000000000000000000000000000000000dEaD', role: 'Burn destination' },
 ];
 
@@ -252,7 +252,7 @@ function TechnicalTab() {
               { path: '/api/og/docs', desc: 'Docs page OG image' },
               { path: '/api/leaderboard', desc: 'Top stakers + burners (cached 5 min)' },
               { path: '/api/quests', desc: 'Quest data + claim rewards' },
-              { path: '/api/rewards', desc: 'On-chain reward tickets' },
+              { path: '/api/rewards', desc: 'V2 reward tickets (FID-verified, rate-limited)' },
               { path: '/api/state', desc: 'Game state sync' },
             ].map(route => (
               <div key={route.path} className="flex items-center gap-3 px-2.5 py-1.5 rounded-lg border border-white/5">

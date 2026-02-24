@@ -3,6 +3,18 @@
     {
       "path": "/api/cron/daily-reminder",
       "schedule": "0 18 * * *"
+    },
+    {
+      "path": "/api/cron/leaderboard",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/directory",
+      "schedule": "*/30 * * * *"
+    },
+    {
+      "path": "/api/cron/health",
+      "schedule": "*/15 * * * *"
     }
   ]
 }

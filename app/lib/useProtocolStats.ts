@@ -3,14 +3,14 @@
 import { useReadContracts } from 'wagmi';
 import { formatEther } from 'viem';
 import {
-  AGORA_TOKEN, AGORA_STAKING, AGORA_AGENT_SUB, AGORA_REWARDS, DEAD_ADDRESS,
-  ERC20_ABI, STAKING_ABI, AGENT_SUB_ABI, REWARDS_ABI,
+  AGORA_TOKEN, AGORA_STAKING, AGORA_AGENT_SUB, AGORA_REWARDS_V2, DEAD_ADDRESS,
+  ERC20_ABI, STAKING_ABI, AGENT_SUB_ABI, REWARDS_V2_ABI,
 } from './contracts';
 
 const TOKEN = AGORA_TOKEN as `0x${string}`;
 const STAKING = AGORA_STAKING as `0x${string}`;
 const SUB = AGORA_AGENT_SUB as `0x${string}`;
-const REWARDS = AGORA_REWARDS as `0x${string}`;
+const REWARDS = AGORA_REWARDS_V2 as `0x${string}`;
 const DEAD = DEAD_ADDRESS as `0x${string}`;
 
 export function useProtocolStats() {
@@ -25,9 +25,9 @@ export function useProtocolStats() {
       { address: STAKING, abi: STAKING_ABI, functionName: 'totalCommitted' },        // 6
       { address: SUB, abi: AGENT_SUB_ABI, functionName: 'totalBurned' },             // 7
       { address: SUB, abi: AGENT_SUB_ABI, functionName: 'totalActiveSubscriptions' }, // 8
-      { address: REWARDS, abi: REWARDS_ABI, functionName: 'totalDistributed' },      // 9
-      { address: REWARDS, abi: REWARDS_ABI, functionName: 'totalClaims' },           // 10
-      { address: REWARDS, abi: REWARDS_ABI, functionName: 'poolBalance' },           // 11
+      { address: REWARDS, abi: REWARDS_V2_ABI, functionName: 'totalDistributed' },      // 9
+      { address: REWARDS, abi: REWARDS_V2_ABI, functionName: 'totalClaims' },           // 10
+      { address: REWARDS, abi: REWARDS_V2_ABI, functionName: 'poolBalance' },           // 11
     ],
     query: { refetchInterval: 30_000 },
   });
